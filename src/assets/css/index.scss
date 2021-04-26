@@ -1,0 +1,36 @@
+$bg-color: #ee3;
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.box {
+  background-color: $bg-color;
+  width: 100px;
+  height: 100px;
+  background-image: url('../img/1569394407.png');
+  font-size: 12px;
+}
+
+.colorWrap {
+  width: 700px;
+  height: 102px;
+  border: 1px solid #eee;
+  padding: 0;
+  margin: 20px auto;
+  font-size: 0;
+}
+
+.colorWrap .item {
+  width: 100px;
+  height: 100px;
+  display: inline-block;
+  margin: 0;
+  margin-left: -10px;
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 100px;
+  text-align: center;
+}
