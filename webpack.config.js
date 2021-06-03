@@ -18,6 +18,10 @@ function scanEntry() {
   return entry;
 }
 
+console.log(11111111)
+console.log(scanEntry())
+console.log(11111111)
+
 function scnanHtmlTemplate() {
   let htmlEntry = {};
   glob.sync(htmlDir + '/**/*.html', {
@@ -30,15 +34,16 @@ function scnanHtmlTemplate() {
   return htmlEntry;
 }
 
+console.log(path.join(__dirname, './index.html'));
+
 function buildHtmlWebpackPlugins() {
-  let tpl = scnanHtmlTemplate();
+  let tpl = scanEntry();
   let chunkFilenames = Object.keys(tpl);
   return chunkFilenames.map(item => {
     let conf = {
       filename: item + '.html',
-      template: tpl[item],
+      template: path.join(__dirname, './index.html'),
       inject: true,
-      favicon: path.resolve('./public/favicon.ico'),
       chunks: [item],
       minify: false,
     }
@@ -48,6 +53,10 @@ function buildHtmlWebpackPlugins() {
 
 const entry = scanEntry();
 const htmlPlugins = buildHtmlWebpackPlugins();
+
+console.log(11111111)
+console.log(htmlPlugins)
+console.log(11111111)
 
 module.exports = {
   entry,
@@ -64,6 +73,10 @@ module.exports = {
   },
   module: {
     rules: [
+      {
+        test: /\.(html|svelte)$/,
+        use: 'svelte-loader'
+      },
       {
         test: /\.js$/,
         loader: 'eslint-loader',
@@ -99,10 +112,11 @@ module.exports = {
       filename: 'assets/css/[name]_[hash].css',
     }),
     new OptimizeCssAssetsPlugin(),
+    // new HtmlWebpackPlugin(),
     ...htmlPlugins,
   ],
   optimization: {
-    minimize: false,
+    minimize: true,
     runtimeChunk: {
       name: 'manifest',
     },
