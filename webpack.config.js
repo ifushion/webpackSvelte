@@ -1,65 +1,44 @@
 const path = require('path');
 const glob = require('glob');
+const webpack = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin"); //提取css到单独文件的插件
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin'); //压缩css插件
 
-const htmlDir = path.join(__dirname, 'public/');
-const srcDir = path.join(__dirname, 'src/');
+const pagesPath = path.join(__dirname, 'src/pages');
 
 function scanEntry() {
   let entry = {};
-  glob.sync(srcDir + '/**/*.js').forEach(name => {
+  glob.sync(pagesPath + '/**/*.js').forEach(name => {
     name = path.normalize(name);
-    const chunkName = name.replace(srcDir, '').replace(/\\/g, '/').replace('.js', '');
+    const chunkName = name.replace(pagesPath, '').replace(/\\/g, '/').replace('.js', '');
     entry[chunkName] = name;
   })
   return entry;
 }
 
-console.log(11111111)
-console.log(scanEntry())
-console.log(11111111)
-
-function scnanHtmlTemplate() {
-  let htmlEntry = {};
-  glob.sync(htmlDir + '/**/*.html', {
-    ignore: '**/include/**',
-  }).forEach(name => {
-    name = path.normalize(name);
-    const chunkName = name.replace(htmlDir, '').replace(/\\/g, '/').replace('.html', '');
-    htmlEntry[chunkName] = name
-  })
-  return htmlEntry;
-}
-
-console.log(path.join(__dirname, './index.html'));
+const endrys = scanEntry();
 
 function buildHtmlWebpackPlugins() {
-  let tpl = scanEntry();
-  let chunkFilenames = Object.keys(tpl);
+  let chunkFilenames = Object.keys(endrys);
   return chunkFilenames.map(item => {
+    console.log(item, 111)
     let conf = {
-      filename: item + '.html',
+      filename: `${item.slice(1)}.html`,
       template: path.join(__dirname, './index.html'),
       inject: true,
       chunks: [item],
-      minify: false,
+      minify: true,
     }
     return new HtmlWebpackPlugin(conf);
   })
 }
 
-const entry = scanEntry();
 const htmlPlugins = buildHtmlWebpackPlugins();
 
-console.log(11111111)
-console.log(htmlPlugins)
-console.log(11111111)
-
 module.exports = {
-  entry,
+  entry: endrys,
   output: {
     path: path.resolve('./dist'),
     filename: 'assets/js/[name]-[chunkhash].js',
@@ -74,7 +53,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(html|svelte)$/,
+        test: /\.(svelte)$/,
         use: 'svelte-loader'
       },
       {
@@ -112,14 +91,15 @@ module.exports = {
       filename: 'assets/css/[name]_[hash].css',
     }),
     new OptimizeCssAssetsPlugin(),
-    // new HtmlWebpackPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
     ...htmlPlugins,
   ],
   optimization: {
     minimize: true,
-    runtimeChunk: {
-      name: 'manifest',
-    },
+    runtimeChunk: 'single',
+    // runtimeChunk: {
+    //   name: 'manifest',
+    // },
     splitChunks: {
       chunks: 'all',
       cacheGroups: {
