@@ -1,6 +1,7 @@
 const path = require('path');
 const glob = require('glob');
 const webpack = require('webpack');
+const { sass } = require('svelte-preprocess-sass');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin"); //提取css到单独文件的插件
@@ -45,7 +46,7 @@ module.exports = {
     publicPath: '/',
   },
   resolve: {
-    extensions: ['.js', '.json', '.scss', '.css'],
+    extensions: ['.js', '.svelte', '.json', '.scss', '.css'],
     alias: {
       "@": path.resolve('./src'),
     }
@@ -57,7 +58,18 @@ module.exports = {
     rules: [
       {
         test: /\.(svelte)$/,
-        use: 'svelte-loader'
+        use: {
+          loader: 'svelte-loader',
+          options: {
+            preprocess: {
+              style: sass(),
+            },
+          }
+        },
+      },
+      {
+        test: /\.(sc|c|sa)ss$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
       },
       {
         test: /\.js$/,
@@ -81,10 +93,6 @@ module.exports = {
           fallback: 'file-loader',
           outputPath: 'assets/img',
         }
-      },
-      {
-        test: /\.(sc|c|sa)ss$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
       },
     ],
   },

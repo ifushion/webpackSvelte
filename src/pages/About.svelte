@@ -1,25 +1,23 @@
 <script>
-	import Nav from '../component/Nav';
+  import Nav from '../component/Nav';
 	export let name;
 </script>
 
 <main>
-	<Nav />
+	<Nav></Nav>
 	<h1>Hello {name}!</h1>
 	<h1>Hello {name}!</h1>
-	<h1 class="nav">Hello {name}!</h1>
+	<h1>Hello {name}!</h1>
 </main>
 
 <style>
-	.nav {
-		color: #0f0 !important;
-	}
 	main {
 		text-align: center;
 		padding: 1em;
 		max-width: 240px;
 		margin: 0 auto;
 	}
+
 	h1 {
 		color: #ff3e00;
 		font-size: 4em;
