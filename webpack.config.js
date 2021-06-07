@@ -50,6 +50,9 @@ module.exports = {
       "@": path.resolve('./src'),
     }
   },
+  devServer: {
+    port: 8000,
+  },
   module: {
     rules: [
       {
