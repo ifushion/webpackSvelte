@@ -1,0 +1,1 @@
+export const WECHAT_NAME = '基因宝Genebox';

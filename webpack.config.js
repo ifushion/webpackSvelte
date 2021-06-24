@@ -5,7 +5,7 @@ const { sass } = require('svelte-preprocess-sass');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin"); //提取css到单独文件的插件
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin'); //压缩css插件
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin'); //压缩css插件
 
 const pagesPath = path.join(__dirname, 'src/pages');
 
@@ -24,7 +24,6 @@ const endrys = scanEntry();
 function buildHtmlWebpackPlugins() {
   let chunkFilenames = Object.keys(endrys);
   return chunkFilenames.map(item => {
-    console.log(item, 111)
     let conf = {
       filename: `${item.slice(1)}.html`,
       template: path.join(__dirname, './index.html'),
@@ -61,6 +60,10 @@ module.exports = {
         use: {
           loader: 'svelte-loader',
           options: {
+            compilerOptions: {
+              css: false
+            },
+            emitCss: true,
             preprocess: {
               style: sass(),
             },
@@ -99,9 +102,9 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
-      filename: 'assets/css/[name]_[hash].css',
+      filename: 'assets/css/[name]_[contenthash].css',
     }),
-    new OptimizeCssAssetsPlugin(),
+    new CssMinimizerPlugin(),
     new webpack.HotModuleReplacementPlugin(),
     ...htmlPlugins,
   ],
